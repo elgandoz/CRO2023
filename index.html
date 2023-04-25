@@ -1,58 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waypoints CRO 2023</title>
-  <script src="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.umd.min.js"></script>
-  <link href="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.css" rel="stylesheet" />
-  <style>
-    body { margin: 0; padding: 0; }
-    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-      maptilersdk.config.apiKey = 'Rbbu3nsbqSZW7WjHyQEk';
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waypoints CRO 2023</title>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.umd.min.js"></script>
+    <link
+      href="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Main Map
+      maptilersdk.config.apiKey = 'Rbbu3nsbqSZW7WjHyQEk'
       const map = new maptilersdk.Map({
         container: 'map', // container's id or the HTML element to render the map
-        style: "d07c7b14-599b-49eb-bb70-000a8f4984d6", // "topo" "topo-v2"
+        style: 'd07c7b14-599b-49eb-bb70-000a8f4984d6', // "topo" "topo-v2"
         center: [7.3021, 44.7922], // starting position [lng, lat]
-        zoom: 11, // starting zoom
-      });
+        zoom: 10, // starting zoom
+      })
 
-      // const marker = new maptilersdk.Marker()
-      //   .setLngLat([7.3021, 44.7922])
-      //   .addTo(map);
+      // Colors
+      const wptColor = '#007cbf'
 
-      map.on('load', async function() {
-
+      // Loading the rest
+      map.on('load', async function () {
         // load the icon image or use an image defined in the sprite
         // map.loadImage('https://docs.maptiler.com/openlayers/geojson-points/icon-plane-512.png', function(error, image){
         //   if (error) throw error;
         //   map.addImage('plane', image);
         // });
-
-        const wptColor = '#007cbf'
-
-        const geojson = await maptilersdk.data.get('8553c46e-c7a9-41bf-b2b2-8185528b6f93'); // CRO 2023 Dataset
+        const wptGeoJson = await maptilersdk.data.get(
+          '8553c46e-c7a9-41bf-b2b2-8185528b6f93',
+        )
+        // CRO 2023 Dataset
         map.addSource('waypoints', {
           type: 'geojson',
-          data: geojson
-        });
-
+          data: wptGeoJson,
+        })
+        // Add WPT circles
         map.addLayer({
-          'id': 'cro2023',
-          'source': 'waypoints',
-          'type': 'circle',
-          'paint': {
-              'circle-radius': 8,
-              'circle-color': wptColor,
-              'circle-stroke-color': '#fff',
-              'circle-stroke-width': 2
-          }
-        });
+          id: 'cro2023',
+          source: 'waypoints',
+          type: 'circle',
+          paint: {
+            'circle-radius': 5,
+            'circle-color': wptColor,
+            'circle-stroke-color': '#fff',
+            'circle-stroke-width': 2,
+          },
+        })
+        // Add WPT labels, from the same source
         map.addLayer({
           id: 'WPTname',
           type: 'symbol',
@@ -60,23 +72,73 @@
           // filter: ['has', 'point_count'],
           layout: {
             // 'text-field': '{name}',
-            'text-field': ['format',
-              ['get', 'name'], { 'font-scale': 1.5, 'font-weight': 800 },
-              '\n',['get', 'desc'],' ',['get', 'ele'],'m',
+            'text-field': [
+              'format',
+              ['get', 'name'],
+              { 'font-scale': 1.7, color: 'green', 'font-weight': 800 },
+              '\n',
+              ['get', 'desc'],
+              ' ',
+              ['get', 'ele'],
+              'm',
             ],
-            'text-font': ['Arial Unicode MS Bold', 'DIN Offc Pro Medium'],
+            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
             'text-size': 12,
-            'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-            'text-radial-offset': 0.5,
+            'text-variable-anchor': ['left', 'top'], // ['top', 'bottom', 'left', 'right'],
+            'text-radial-offset': 0.7,
             'text-justify': 'auto',
           },
-          'paint': {
-            'text-color': wptColor,
+          paint: {
+            'text-color': '#333',
             'text-halo-color': '#fff',
             'text-halo-width': 2,
-          }
-        });
-      });
-  </script>
-</body>
+          },
+        })
+
+        /* AIRSPACES */
+        // Vector (WIP)
+        // map.addSource('openaip', {
+        //   type: 'vector',
+        //   tiles: [
+        //     'https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.pbf?apiKey=fc8c52e4d24cb4b7769bd9ce2b276a84',
+        //   ],
+        //   minzoom: 0,
+        //   maxzoom: 22,
+        //   attribution:
+        //     '<a href="https://www.openaip.net/" target="_blank">&copy; OpenAIP</a>',
+        // })
+        // map.addLayer({
+        //     'id': 'openaip',
+        //     'type': 'line',
+        //     'source': 'openaip',
+        //     'source-layer': 'airspaces',
+        //     'layout': {
+        //       'line-cap': 'round',
+        //       'line-join': 'round'
+        //     },
+        //     'paint': {
+        //       'line-opacity': 0.6,
+        //       'line-color': 'rgb(255,0,0)',
+        //       'line-width': 1
+        //     }
+        //   })
+        map.addSource('openaip-raster', {
+          type: 'raster',
+          tiles: [
+            'https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=fc8c52e4d24cb4b7769bd9ce2b276a84',
+          ],
+          minzoom: 0,
+          maxzoom: 22,
+          tileSize: 256,
+          attribution:
+            '<a href="https://www.openaip.net/" target="_blank">&copy; OpenAIP</a>',
+        })
+        map.addLayer({
+          id: 'openaip-raster',
+          type: 'raster',
+          source: 'openaip-raster', // ID of the tile source created above
+        })
+      })
+    </script>
+  </body>
 </html>
