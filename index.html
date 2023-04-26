@@ -20,6 +20,11 @@
         bottom: 0;
         width: 100%;
       }
+      /* Hide some of the UX */
+      .maplibregl-ctrl-attrib,
+      .maplibregl-ctrl > a {
+        display: none !important;
+      }
     </style>
   </head>
   <body>
@@ -31,11 +36,15 @@
         container: 'map', // container's id or the HTML element to render the map
         style: 'd07c7b14-599b-49eb-bb70-000a8f4984d6', // "topo" "topo-v2"
         center: [7.3021, 44.7922], // starting position [lng, lat]
-        zoom: 10, // starting zoom
+        zoom: 10.9, // starting zoom
+        scaleControl: true, // add the scaleControl to the map
+        navigationControl: false,
+        geolocateControl: false,
       })
 
       // Colors
-      const wptColor = '#007cbf'
+      const wptColor = '#f00'
+      const txtColor = '#333' // '#007cbf'
 
       // Loading the rest
       map.on('load', async function () {
@@ -75,21 +84,25 @@
             'text-field': [
               'format',
               ['get', 'name'],
-              { 'font-scale': 1.7, color: 'green', 'font-weight': 800 },
-              '\n',
-              ['get', 'desc'],
-              ' ',
-              ['get', 'ele'],
-              'm',
+              { 'font-scale': 1.7, 'font-weight': 800 },
+              // ' ',
+              // '\n',
+              // ['get', 'desc'],
+              // ' ',
+              // ['get', 'ele'],
+              // 'm',
             ],
-            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+            'text-font': [
+              'Arial Unicode MS Bold',
+              'DIN Offc Pro Medium',
+            ],
             'text-size': 12,
-            'text-variable-anchor': ['left', 'top'], // ['top', 'bottom', 'left', 'right'],
-            'text-radial-offset': 0.7,
+            'text-variable-anchor': ['left', 'top', 'right', 'bottom'], // ['top', 'bottom', 'left', 'right'],
+            'text-radial-offset': 0.5,
             'text-justify': 'auto',
           },
           paint: {
-            'text-color': '#333',
+            'text-color': txtColor,
             'text-halo-color': '#fff',
             'text-halo-width': 2,
           },
@@ -122,22 +135,22 @@
         //       'line-width': 1
         //     }
         //   })
-        map.addSource('openaip-raster', {
-          type: 'raster',
-          tiles: [
-            'https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=fc8c52e4d24cb4b7769bd9ce2b276a84',
-          ],
-          minzoom: 0,
-          maxzoom: 22,
-          tileSize: 256,
-          attribution:
-            '<a href="https://www.openaip.net/" target="_blank">&copy; OpenAIP</a>',
-        })
-        map.addLayer({
-          id: 'openaip-raster',
-          type: 'raster',
-          source: 'openaip-raster', // ID of the tile source created above
-        })
+        // map.addSource('openaip-raster', {
+        //   type: 'raster',
+        //   tiles: [
+        //     'https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=fc8c52e4d24cb4b7769bd9ce2b276a84',
+        //   ],
+        //   minzoom: 0,
+        //   maxzoom: 22,
+        //   tileSize: 256,
+        //   attribution:
+        //     '<a href="https://www.openaip.net/" target="_blank">&copy; OpenAIP</a>',
+        // })
+        // map.addLayer({
+        //   id: 'openaip-raster',
+        //   type: 'raster',
+        //   source: 'openaip-raster', // ID of the tile source created above
+        // })
       })
     </script>
   </body>
